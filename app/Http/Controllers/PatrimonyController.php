@@ -21,11 +21,18 @@ abstract class PatrimonyController
         $this->modelName = $modelName;
     }
 
-    public function get(): JsonResponse
+    public function get(Request $request): JsonResponse
     {
+        $model = $this->modelInstance;
+        $description = $request->input('descricao');
+
+        if ($description) {
+            $model = $model->where('descricao', $description);
+        }
+
         return response()->json([
             'error' => false,
-            'data' => $this->modelInstance->all()
+            'data' => $model->get()
         ]);
     }
 
