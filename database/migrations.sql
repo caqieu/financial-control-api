@@ -29,5 +29,6 @@ CREATE TABLE IF NOT EXISTS `financial`.`despesas` (
   `descricao` VARCHAR(45) NOT NULL,
   `valor` FLOAT NOT NULL,
   `data` TIMESTAMP NOT NULL,
-  PRIMARY KEY (`id`))
+  `categoria` ENUM ('Alimentação', 'Saúde', 'Moradia', 'Transporte', 'Educação', 'Lazer', 'Imprevistos', 'Outras')
+    PRIMARY KEY (`id`))
 ENGINE = InnoDB;

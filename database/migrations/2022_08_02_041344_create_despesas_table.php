@@ -14,11 +14,14 @@ return new class extends Migration {
     {
         Schema::create('despesas', function (Blueprint $table) {
             $table->increments('id');
-            
+
             $table->string('descricao', 45);
             $table->float('valor');
+            $table->string('categoria', 100);
 
             $table->timestamp('data');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

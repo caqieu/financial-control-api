@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->float('valor');
 
             $table->timestamp('data');
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

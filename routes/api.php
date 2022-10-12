@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\ExpensesController;
+use App\Http\Controllers\IncomesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::get('/', function () {
+    return response()->json([
+        'message' => "it works!"
+    ]);
+});
+
+Route::group(['prefix' => 'receitas', 'controller' => IncomesController::class], function () {
+    Route::get('', 'get');
+    Route::post('', 'create');
+
+    Route::group(['prefix' => '{id}', 'where' => ['id', "/^[0-9]*$/"]], function () {
+        Route::get('', 'find');
+        Route::put('', 'update');
+        Route::delete('', 'delete');
+    });
+});
+
+Route::group(['prefix' => 'despesas', 'controller' => ExpensesController::class], function () {
+    Route::get('', 'get');
+    Route::post('', 'create');
+
+    Route::group(['prefix' => '{id}', 'where' => ['id', "/^[0-9]*$/"]], function () {
+        Route::get('', 'find');
+        Route::put('', 'update');
+        Route::delete('', 'delete');
+    });
 });
