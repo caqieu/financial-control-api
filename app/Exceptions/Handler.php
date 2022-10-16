@@ -82,7 +82,7 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof ValidationException) {
-            $code = 401;
+            $code = 422;
             $data = $exception->errors();
             $message = 'Dados Inválidos';
         }

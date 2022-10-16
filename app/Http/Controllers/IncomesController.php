@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Incomes;
+use App\services\PatrimonyService;
 
 class IncomesController extends PatrimonyController
 {
@@ -20,6 +21,8 @@ class IncomesController extends PatrimonyController
             'data' => 'date'
         ];
 
-        parent::__construct(app(Incomes::class), 'Receita');
+        $service = new PatrimonyService(app(Incomes::class));
+
+        parent::__construct($service, 'Receita');
     }
 }

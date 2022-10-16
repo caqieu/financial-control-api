@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Expenses extends Patrimony
 {
-    const CATEGORIES_VALIDATION = [
+    use HasFactory;
+
+    const CATEGORIES = [
         'alimentacao' => 'Alimentação',
         'saude' => 'Saúde',
         'moradia' => 'Moradia',
@@ -25,12 +29,16 @@ class Expenses extends Patrimony
         'categoria'
     ];
 
-    public function formatFields(array $data)
+    protected static function booted()
     {
-        $data['categoria'] = $data['categoria'] ?? 'outras';
+        static::creating(function ($data) {
+            $category = $data['categoria'] ?? 'outras';
 
-        $data['categoria'] = self::CATEGORIES_VALIDATION[$data['categoria']];
+            $data['categoria'] = self::CATEGORIES[$category];
+        });
 
-        return $data;
+        static::updating(function ($data) {
+            $data['categoria'] = self::CATEGORIES[$data['categoria']];
+        });
     }
 }

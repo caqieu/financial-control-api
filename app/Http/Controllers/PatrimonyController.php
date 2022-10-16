@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patrimony;
+use App\services\PatrimonyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -10,35 +11,38 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class PatrimonyController
 {
-    protected Patrimony $modelInstance;
+    protected PatrimonyService $serviceInstance;
     protected string $modelName;
     protected array $createRules;
     protected array $updateRules;
 
-    public function __construct(Patrimony $modelInstance, string $modelName)
+    public function __construct(PatrimonyService $service, string $modelName)
     {
-        $this->modelInstance = $modelInstance;
+        $this->serviceInstance = $service;
         $this->modelName = $modelName;
     }
 
     public function get(Request $request): JsonResponse
     {
-        $model = $this->modelInstance;
         $description = $request->input('descricao');
-
-        if ($description) {
-            $model = $model->where('descricao', $description);
-        }
 
         return response()->json([
             'error' => false,
-            'data' => $model->get()
+            'data' => $this->serviceInstance->get($description)
+        ]);
+    }
+
+    public function getByDate(int $year, int $month)
+    {
+        return response()->json([
+            'error' => false,
+            'data' => $this->serviceInstance->getByDate($year, $month)
         ]);
     }
 
     public function find(int $id): JsonResponse
     {
-        $patrimony = $this->modelInstance->find($id);
+        $patrimony = $this->serviceInstance->find($id);
 
         if ($patrimony == null) {
             throw new NotFoundHttpException($this->modelName . ' não encontrada');
@@ -56,43 +60,49 @@ abstract class PatrimonyController
 
         $this->checkDuplicated($params['descricao'], $params['data']);
 
-        $data = $this->modelInstance->create($this->modelInstance->formatFields($params));
-
         return response()->json([
             'error' => false,
             'message' => $this->modelName . ' criada com sucesso.',
-            'data' => $data
+            'data' => $this->serviceInstance->create($params)
         ], 201);
     }
 
     public function update(Request $request, int $id)
     {
-        $params = $request->validate($this->updateRules);
+        $params = $request->validate($this->updateRules, $request->all());
 
-        $patrimony = $this->modelInstance->find($id);
+        $patrimony = $this->serviceInstance->find($id);
 
-        if ($patrimony == null) {
-            throw new NotFoundHttpException($this->modelName . ' não encontrada');
-        }
+        $this->checkDuplicated(
+            $params['descricao'] ?? $patrimony->descricao,
+            $params['data'] ?? $patrimony->data,
+            $id
+        );
 
-        $this->checkDuplicated($params['descricao'], $params['data'], $id);
-
-        $patrimony->update($this->modelInstance->formatFields($params));
+        $this->serviceInstance->update($patrimony, $params);
 
         return response()->json([
             'error' => false,
             'message' => $this->modelName . ' atualizada com sucesso.',
-            'data' => $patrimony
         ]);
+    }
+
+    protected function checkDuplicated(string $description, string $date, int $id = 0)
+    {
+        $month = date('m', strtotime($date));
+
+        $duplicated = $this->serviceInstance->getWithFilters(['id'], 0, $month, $description, $id);
+
+        if (!$duplicated->isEmpty()) {
+            throw new ConflictHttpException($this->modelName . ' já criada no mês ' . $month);
+        }
+
+        return false;
     }
 
     public function delete(int $id)
     {
-        $error = !$this->modelInstance
-            ->where('id', $id)
-            ->delete();
-
-        if ($error) {
+        if (!$this->serviceInstance->delete($id)) {
             throw new NotFoundHttpException($this->modelName . ' não encontrada');
         }
 
@@ -100,23 +110,5 @@ abstract class PatrimonyController
             'error' => false,
             'message' => $this->modelName . ' excluída com sucesso.'
         ]);
-    }
-
-    protected function checkDuplicated(string $description, string $date, int $id = null): bool
-    {
-        $month = date('m', strtotime($date));
-
-        $duplicated = $this->modelInstance
-            ->select('id')
-            ->where('descricao', $description)
-            ->whereMonth('data', $month)
-            ->when($id, fn($q) => $q->where('id', '<>', $id))
-            ->exists();
-
-        if ($duplicated) {
-            throw new ConflictHttpException($this->modelName . ' já criada no mês ' . $month);
-        }
-
-        return false;
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expenses;
+use App\services\PatrimonyService;
 
 class ExpensesController extends PatrimonyController
 {
@@ -13,7 +14,7 @@ class ExpensesController extends PatrimonyController
             'valor' => 'required|numeric|min:0|max:10000000',
             'data' => 'required|date',
             'categoria' => 'string
-                |in:' . implode(',', array_keys(Expenses::CATEGORIES_VALIDATION)) . '
+                |in:' . implode(',', array_keys(Expenses::CATEGORIES)) . '
                 |nullable'
         ];
 
@@ -22,10 +23,12 @@ class ExpensesController extends PatrimonyController
             'valor' => 'numeric|min:0|max:10000000',
             'data' => 'date',
             'categoria' => 'string
-                |in:' . implode(',', array_keys(Expenses::CATEGORIES_VALIDATION)) . '
+                |in:' . implode(',', array_keys(Expenses::CATEGORIES)) . '
                 |nullable'
         ];
 
-        parent::__construct(app(Expenses::class), 'Despesa');
+        $service = new PatrimonyService(app(Expenses::class));
+
+        parent::__construct($service, 'Despesa');
     }
 }

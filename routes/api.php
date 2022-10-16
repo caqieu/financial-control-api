@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\IncomesController;
+use App\Http\Controllers\SummaryController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,11 +26,19 @@ Route::group(['prefix' => 'receitas', 'controller' => IncomesController::class],
     Route::get('', 'get');
     Route::post('', 'create');
 
-    Route::group(['prefix' => '{id}', 'where' => ['id', "/^[0-9]*$/"]], function () {
+    Route::group(['prefix' => '{id}', 'where' => ['id' => '[0-9]+']], function () {
         Route::get('', 'find');
         Route::put('', 'update');
         Route::delete('', 'delete');
     });
+
+    Route::get('{ano}/{mes}', 'getByDate')
+        ->where(
+            [
+                'ano' => "[0-9]{4}",
+                'mes' => "[0-2]{1}[0-9]{1}"
+            ]
+        );
 });
 
 Route::group(['prefix' => 'despesas', 'controller' => ExpensesController::class], function () {
@@ -41,4 +50,16 @@ Route::group(['prefix' => 'despesas', 'controller' => ExpensesController::class]
         Route::put('', 'update');
         Route::delete('', 'delete');
     });
+
+    Route::get('{ano}/{mes}', 'getByDate')
+        ->where(
+            [
+                'ano' => "[0-9]{4}",
+                'mes' => "[0-2]{1}[0-9]{1}"
+            ]
+        );
+});
+
+Route::group(['prefix' => 'resumo/{ano}/{mes}', 'controller' => SummaryController::class], function () {
+    Route::get('', 'getByDate');
 });

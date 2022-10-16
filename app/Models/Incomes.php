@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class Incomes extends Patrimony
 {
-    protected $table = 'receitas';
+    use HasFactory;
 
-    public function formatFields(array $data)
-    {
-        return $data;
-    }
+    protected $table = 'receitas';
 }
