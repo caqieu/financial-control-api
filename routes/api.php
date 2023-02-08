@@ -3,6 +3,7 @@
 use App\Http\Controllers\ExpensesController;
 use App\Http\Controllers\IncomesController;
 use App\Http\Controllers\SummaryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,44 +23,76 @@ Route::get('/', function () {
     ]);
 });
 
-Route::group(['prefix' => 'receitas', 'controller' => IncomesController::class], function () {
-    Route::get('', 'get');
-    Route::post('', 'create');
+Route::group(
+    [
+        'prefix' => 'receitas',
+        'controller' => IncomesController::class,
+        'middleware' => 'api:sanctum'
+    ],
+    function () {
+        Route::get('', 'get');
+        Route::post('', 'create');
 
-    Route::group(['prefix' => '{id}', 'where' => ['id' => '[0-9]+']], function () {
-        Route::get('', 'find');
-        Route::put('', 'update');
-        Route::delete('', 'delete');
-    });
+        Route::group(['prefix' => '{id}', 'where' => ['id' => '[0-9]+']], function () {
+            Route::get('', 'find');
+            Route::put('', 'update');
+            Route::delete('', 'delete');
+        });
 
-    Route::get('{ano}/{mes}', 'getByDate')
-        ->where(
-            [
-                'ano' => "[0-9]{4}",
-                'mes' => "[0-2]{1}[0-9]{1}"
-            ]
-        );
-});
+        Route::get('{ano}/{mes}', 'getByDate')
+            ->where(
+                [
+                    'ano' => "[0-9]{4}",
+                    'mes' => "[0-2]{1}[0-9]{1}"
+                ]
+            );
+    }
+);
 
-Route::group(['prefix' => 'despesas', 'controller' => ExpensesController::class], function () {
-    Route::get('', 'get');
-    Route::post('', 'create');
+Route::group(
+    [
+        'prefix' => 'despesas',
+        'controller' => ExpensesController::class,
+        'middleware' => 'api:sanctum'
+    ],
+    function () {
+        Route::get('', 'get');
+        Route::post('', 'create');
 
-    Route::group(['prefix' => '{id}', 'where' => ['id', "/^[0-9]*$/"]], function () {
-        Route::get('', 'find');
-        Route::put('', 'update');
-        Route::delete('', 'delete');
-    });
+        Route::group(['prefix' => '{id}', 'where' => ['id', "/^[0-9]*$/"]], function () {
+            Route::get('', 'find');
+            Route::put('', 'update');
+            Route::delete('', 'delete');
+        });
 
-    Route::get('{ano}/{mes}', 'getByDate')
-        ->where(
-            [
-                'ano' => "[0-9]{4}",
-                'mes' => "[0-2]{1}[0-9]{1}"
-            ]
-        );
-});
+        Route::get('{ano}/{mes}', 'getByDate')
+            ->where(
+                [
+                    'ano' => "[0-9]{4}",
+                    'mes' => "[0-2]{1}[0-9]{1}"
+                ]
+            );
+    }
+);
 
-Route::group(['prefix' => 'resumo/{ano}/{mes}', 'controller' => SummaryController::class], function () {
-    Route::get('', 'getByDate');
-});
+Route::group(
+    [
+        'prefix' => 'resumo/{ano}/{mes}',
+        'controller' => SummaryController::class,
+        'middleware' => 'api:sanctum'
+    ],
+    function () {
+        Route::get('', 'getByDate');
+    }
+);
+
+Route::group(
+    [
+        'prefix' => 'user',
+        'controller' => UserController::class
+    ],
+    function () {
+        Route::post('register', 'create');
+        Route::post('login', 'login');
+    }
+);

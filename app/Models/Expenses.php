@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Expenses extends Patrimony
 {
@@ -26,8 +27,14 @@ class Expenses extends Patrimony
         'descricao',
         'valor',
         'data',
-        'categoria'
+        'categoria',
+        'user_id'
     ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected static function booted()
     {

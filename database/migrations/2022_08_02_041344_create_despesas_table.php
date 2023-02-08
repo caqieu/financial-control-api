@@ -19,6 +19,12 @@ return new class extends Migration {
             $table->float('valor');
             $table->string('categoria', 100);
 
+            $table->unsignedBigInteger('user_id');
+            $table
+                ->foreign('user_id')
+                ->references('id')
+                ->on('users');
+
             $table->timestamp('data');
             $table->timestamps();
             $table->softDeletes();

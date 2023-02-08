@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Expenses;
-use App\services\PatrimonyService;
+use App\Services\PatrimonyService;
 
 class ExpensesController extends PatrimonyController
 {

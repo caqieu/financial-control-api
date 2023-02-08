@@ -13,7 +13,8 @@ abstract class Patrimony extends Model
         'id',
         'descricao',
         'valor',
-        'data'
+        'data',
+        'user_id'
     ];
 
     protected $casts = [

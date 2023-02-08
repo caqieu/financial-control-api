@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Models\Expenses;
 use App\Models\Incomes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Expenses;
 use App\Models\Incomes;
-use App\services\PatrimonyService;
+use App\Services\PatrimonyService;
 
 class SummaryController
 {

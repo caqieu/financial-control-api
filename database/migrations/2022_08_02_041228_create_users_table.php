@@ -12,19 +12,12 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('receitas', function (Blueprint $table) {
-            $table->increments('id');
+        Schema::create('users', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome');
+            $table->string('email');
+            $table->string('password');
 
-            $table->string('descricao', 45);
-            $table->float('valor');
-
-            $table->unsignedBigInteger('user_id');
-            $table
-                ->foreign('user_id')
-                ->references('id')
-                ->on('users');
-
-            $table->timestamp('data');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -37,6 +30,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('receitas');
+        Schema::dropIfExists('user');
     }
 };

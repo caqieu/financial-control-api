@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patrimony;
-use App\services\PatrimonyService;
+use App\Services\PatrimonyService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
